@@ -7,7 +7,7 @@
 #include "FS_Filesystem.h"
 #include "FS_Console.h"
 #include "FS_Logging.h"
-#include "FS_Kernel.h"
+
 
 #include <stdint.h>
 
@@ -15,18 +15,21 @@
 
 typedef struct
 {
-  volatile uint64_t timeMicroseconds;
+  _Bool isInitialised; // If flag set, it's safe to use the system binding.
+  volatile uint64_t timeMicroseconds; // Application, not FS_System, must increment this.
+
   FS_Exception_t * exc;
   FS_Filesystem_t * fs;
-  FS_Console_t * console; // Replace this pointer if a remote session arrives.
+  FS_Console_t * console;
   FS_Logging_t * log;
-  FS_KernelAPI_t * kernel;
 
 }FS_GenericModuleSystemBinding_t;
 
 typedef struct
 {
-  FS_DT_USARTDriver_t * usart;
+  uint16_t timerIntervalMicroseconds;
+  FS_GenericModuleSystemBinding_t * sysInstance;
+  FS_DT_IOStream_t * usart;
 
 
 }FS_System_InitStruct_t;
@@ -34,5 +37,6 @@ typedef struct
 
 void FS_System_InitStructInit(FS_System_InitStruct_t * initStruct);
 _Bool FS_System_Init(FS_System_InitStruct_t * initStruct);
+
 
 #endif // FS_SYSTEM_H
