@@ -199,9 +199,14 @@ static void mainLoop(void * params)
 {
   char tempByte;
 
-  // Print the splash screen before going into the processing loop.
-  io.interfaces[io.defaultInterfaceIndex]->writeBytes( FS_CONSOLE_SPLASH_SCREEN,
-                                                       strlen(FS_CONSOLE_SPLASH_SCREEN) );
+  // Clear the screen.
+  output( FS_CONSOLE_VT100_CLEAR_SCREEN, strlen( FS_CONSOLE_VT100_CLEAR_SCREEN ) );
+
+  // Print the splash screen.
+  output( FS_CONSOLE_SPLASH_SCREEN, strlen( FS_CONSOLE_SPLASH_SCREEN ) );
+
+  // Print the prompt character prior to going in to the processing loop.
+  output(FS_CONSOLE_PROMPT_CHARACTER, 1);
 
   while(true)
   {
@@ -247,6 +252,9 @@ static void mainLoop(void * params)
           output(FS_CONSOLE_PROMPT_CHARACTER, 1);
         }
       }
+
+      // Give the mutex back.
+      xSemaphoreGive(io.mutex);
     }
   }
 }
