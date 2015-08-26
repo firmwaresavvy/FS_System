@@ -26,6 +26,13 @@
 
 typedef struct
 {
+  char buffer[FS_CONSOLE_INPUT_BUFFER_LENGTH_BYTES];
+  uint16_t ptr;
+
+}FS_Console_Input_t;
+
+typedef struct
+{
   int(*printf)(const char * fmt, ...);
   _Bool(*registerCommand)( const char * cmd,
                            void(*callback)( const char * argv, FS_DT_IOStream_t * io ) );
@@ -69,6 +76,14 @@ typedef struct
   void(*removeIOStreamCallback)(FS_DT_IOStream_t * oldIO);
 
 }FS_Console_InitReturnsStruct_t;
+
+typedef struct
+{
+  FS_Console_Input_t * input;
+  _Bool(*inputLineAvailable)(void);
+  void(*output)(const char * buf, uint8_t numBytes);
+
+}FS_Console_CommandCallbackInterface_t;
 
 /*------------------------------------------------------------------------------
 ----------------------- END PUBLIC TYPE DEFINITIONS ----------------------------
